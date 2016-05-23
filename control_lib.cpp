@@ -199,7 +199,8 @@ int init_ussensor()
 
 int get_distance()
 {
-  char read_data[255],temp;
+  int read_data[255];
+  int temp;
   int i;
   int count_data=0;
   int return_value=0;
@@ -213,10 +214,15 @@ int get_distance()
 //      delay(1);
     }
 
-    return_value = read_data[2];
+//    return_value = read_data[2];
+    return_value = read_data[2] |((0x01&read_data[1])<<8);
+//    return_value = (0x01&read_data[1])<<5;
   }
   else
     return_value=-1;
+  
+  if(read_data[0] != 0x22)
+  	  return_value =-1;
 
   for(i=0;i<4;i++)
     Serial.write(send_data[i]);
