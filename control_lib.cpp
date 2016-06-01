@@ -14,9 +14,16 @@ int step_delay[2]={0x7FFF,0x7FFF};
 int step_dir[2] = {0,0};
 long step_position[2]={0,0};
 long step_position_ref[2] ={0,0};
+int servo_position_ref;
+int servo_counter=0;
 
 
 int state[2]={LOW,LOW};
+
+void update_servo_angle(int angle)
+{
+	servo_position_ref = angle *70 /180 +20;
+}
 
 float update_step_position(int ch, float position, float speed)
 {
@@ -99,16 +106,28 @@ void update_step_speed(int ch,float speed)
   	  	  step_delay[ch-1] =  0x7FFF;
   	  
   	  else if(speed>MAX_SPEED)
-    	step_delay[ch-1] =  (int)(1.0e6/20/RAD2PULSE/MAX_SPEED);
+    	step_delay[ch-1] =  (int)(1.0e6/40/RAD2PULSE/MAX_SPEED);
 
 	  else
-    	step_delay[ch-1] =  (int)(1.0e6/20/RAD2PULSE/speed);
+    	step_delay[ch-1] =  (int)(1.0e6/40/RAD2PULSE/speed);
   }
 
 }
 
 void drive_step_motor_s()
 {
+
+  if(servo_counter >1000)
+  {
+  	  servo_counter =0;
+  	  digitalWrite(SERVO_PIN,1);
+  }
+  
+  if(servo_counter ==servo_position_ref)
+  	  digitalWrite(SERVO_PIN, 0);
+
+  servo_counter++;
+
 
 	if(step_delay[0] != 0x7FFF)
 	{
@@ -141,6 +160,16 @@ void drive_step_motor_s()
 
 void drive_step_motor_p()
 {
+  if(servo_counter >1000)
+  {
+  	  servo_counter =0;
+  	  digitalWrite(SERVO_PIN,1);
+  }
+  
+  if(servo_counter ==servo_position_ref)
+  	  digitalWrite(SERVO_PIN, 0);
+
+  servo_counter++;
 
 	if(step_delay[0] != 0x7FFF && step_position[0] != step_position_ref[0])
 	{
@@ -166,8 +195,7 @@ void drive_step_motor_p()
 
 	  step_count[1]++;
 	}
-  
-  timer_counter++;
+//  timer_counter++;
 }
 
 void init_step_motor(int mode)
@@ -177,8 +205,10 @@ void init_step_motor(int mode)
   pinMode(stpPin1, OUTPUT);
   pinMode(dirPin2, OUTPUT);
   pinMode(stpPin2, OUTPUT);
+  
+  pinMode(SERVO_PIN,OUTPUT);
 
-  Timer1.initialize(10);
+  Timer1.initialize(20);
   if(mode ==SPEED)
   	Timer1.attachInterrupt(drive_step_motor_s);
   if(mode ==POSITION)

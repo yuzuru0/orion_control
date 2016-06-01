@@ -15,12 +15,16 @@
 
 #define SPEED 0
 #define POSITION 1
+
+#define SERVO_PIN 12
+
 void init_step_motor(int mode);
 void drive_step_motor_s();
 void drive_step_motor_p();
 void update_step_speed(int ch,float speed);
 float get_step_position(int ch);
 float update_step_position(int ch, float position, float speed);
+void update_servo_angle(int angle);
 
 int init_ussensor();
 int get_distance();
