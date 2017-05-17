@@ -7,7 +7,7 @@
 
 #define RAD2PULSE 509
 #define ROTATEPULSE 3200
-#define MAX_SPEED 30	//(=5rps)
+#define MAX_SPEED 15	//(=5rps)
 #define MIN_SPEED 3.14e-3
 
 #define LEFT 1

@@ -22,7 +22,7 @@ int state[2]={LOW,LOW};
 
 void update_servo_angle(int angle)
 {
-	servo_position_ref = angle *70 /180 +20;
+	servo_position_ref = angle *28 /180 +8;
 }
 
 float update_step_position(int ch, float position, float speed)
@@ -82,10 +82,10 @@ void update_step_speed(int ch,float speed)
   	  	  step_delay[ch-1] =  0x7FFF;
   	  
   	  else if(speed>MAX_SPEED)
-    	step_delay[ch-1] =  (int)(1.0e6/20/RAD2PULSE/MAX_SPEED);
+    	step_delay[ch-1] =  (int)(1.0e6/100/RAD2PULSE/MAX_SPEED);
 
 	  else
-    	step_delay[ch-1] =  (int)(1.0e6/20/RAD2PULSE/speed);
+    	step_delay[ch-1] =  (int)(1.0e6/100/RAD2PULSE/speed);
   }
 
   if(ch ==2)
@@ -106,10 +106,10 @@ void update_step_speed(int ch,float speed)
   	  	  step_delay[ch-1] =  0x7FFF;
   	  
   	  else if(speed>MAX_SPEED)
-    	step_delay[ch-1] =  (int)(1.0e6/40/RAD2PULSE/MAX_SPEED);
+    	step_delay[ch-1] =  (int)(1.0e6/100/RAD2PULSE/MAX_SPEED);
 
 	  else
-    	step_delay[ch-1] =  (int)(1.0e6/40/RAD2PULSE/speed);
+    	step_delay[ch-1] =  (int)(1.0e6/100/RAD2PULSE/speed);
   }
 
 }
@@ -208,7 +208,7 @@ void init_step_motor(int mode)
   
   pinMode(SERVO_PIN,OUTPUT);
 
-  Timer1.initialize(20);
+  Timer1.initialize(50);
   if(mode ==SPEED)
   	Timer1.attachInterrupt(drive_step_motor_s);
   if(mode ==POSITION)
