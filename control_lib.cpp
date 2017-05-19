@@ -17,7 +17,7 @@ long step_position_ref[2] ={0,0};
 int servo_position_ref;
 int servo_counter=0;
 
-
+#comment
 int state[2]={LOW,LOW};
 
 void update_servo_angle(int angle)
