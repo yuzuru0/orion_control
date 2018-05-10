@@ -27,18 +27,6 @@ void update_servo_angle(int angle)
 
 float update_step_position(int ch, float position, float speed)
 {
-/*
-	float pos_now;
-	
-	pos_now = get_step_position(ch);
-	
-	if(position <pos_now)
-		update_step_speed(ch, -speed);
-	if(position >pos_now)
-		update_step_speed(ch, speed);
-	if(position == pos_now)
-		update_step_speed(ch,0);
-*/
 	float pos_now;
 
 	if(speed<0)
@@ -59,7 +47,6 @@ float update_step_position(int ch, float position, float speed)
 float get_step_position(int ch)
 {
 	return (step_position[ch-1]*2*3.14/ROTATEPULSE);
-//	return step_position[ch-1];
 }
 
 void update_step_speed(int ch,float speed)
@@ -195,7 +182,7 @@ void drive_step_motor_p()
 
 	  step_count[1]++;
 	}
-//  timer_counter++;
+
 }
 
 void init_step_motor(int mode)
@@ -241,12 +228,10 @@ int get_distance()
     {
       read_data[count_data] = temp;
       count_data++;
-//      delay(1);
     }
 
-//    return_value = read_data[2];
     return_value = read_data[2] |((0x01&read_data[1])<<8);
-//    return_value = (0x01&read_data[1])<<5;
+
   }
   else
     return_value=-1;
@@ -260,18 +245,3 @@ int get_distance()
     return return_value;
 }
 
-/*
-void output_data(int ch, float voltage)
-{
-  if(voltage<0)
-    voltage=0;
-  if(voltage>12)
-    voltage=12;
-  if(ch ==1)
-    da1.run(voltage*255/12);
-
-  if(ch ==2)
-    da2.run(voltage*255/12);
-
-}
-*/
