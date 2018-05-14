@@ -17,6 +17,9 @@ long step_position_ref[2] ={0,0};
 int servo_position_ref;
 int servo_counter=0;
 
+int ussensor_value=0;
+int ussensor_enable=0;
+ 
 int state[2]={LOW,LOW};
 
 void update_servo_angle(int angle)
@@ -107,6 +110,8 @@ void drive_step_motor_s()
   {
   	  servo_counter =0;
   	  digitalWrite(SERVO_PIN,1);
+  	  if(ussensor_enable)
+  	  	comm_ussensor();
   }
   
   if(servo_counter ==servo_position_ref)
@@ -150,6 +155,9 @@ void drive_step_motor_p()
   {
   	  servo_counter =0;
   	  digitalWrite(SERVO_PIN,1);
+  	  
+  	  if(ussensor_enable)
+  	  	  comm_ussensor();
   }
   
   if(servo_counter ==servo_position_ref)
@@ -211,15 +219,16 @@ int init_ussensor()
 
   for(i=0;i<4;i++)
     Serial.write(send_data[i]);
+    
+    ussensor_enable=1;
 }
 
-int get_distance()
+int comm_ussensor()
 {
   int read_data[255];
   int temp;
   int i;
   int count_data=0;
-  int return_value=0;
   
   if(Serial.available())
   {
@@ -229,18 +238,23 @@ int get_distance()
       count_data++;
     }
 
-    return_value = read_data[2] |((0x01&read_data[1])<<8);
+    ussensor_value = read_data[2] |((0x01&read_data[1])<<8);
 
   }
   else
-    return_value=-1;
+    ussensor_value=-1;
   
   if(read_data[0] != 0x22)
-  	  return_value =-1;
+  	  ussensor_value =-1;
 
   for(i=0;i<4;i++)
     Serial.write(send_data[i]);
 
-    return return_value;
+	return 0;
+}
+
+int get_distance()
+{
+    return ussensor_value;
 }
 
