@@ -27,9 +27,11 @@ float update_step_position(int ch, float position, float speed);
 void update_servo_angle(int angle);
 
 int init_ussensor();
+int comm_ussensor();
 int get_distance();
 
 static char send_data[4]={0x22,0x00,0x00,0x22};
+static char temp_data[4]={0x11,0x00,0x00,0x11};
 
 
 void output_data(int ch, float voltage);

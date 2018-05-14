@@ -17,6 +17,8 @@ long step_position_ref[2] ={0,0};
 int servo_position_ref;
 int servo_counter=0;
 
+int one_sec_counter=0;
+
 int ussensor_value=0;
 int ussensor_enable=0;
  
@@ -106,6 +108,16 @@ void update_step_speed(int ch,float speed)
 void drive_step_motor_s()
 {
 
+//	100ms‚¨‚«
+ if(timer_counter %  2000 ==0)
+ {
+ 	 comm_ussensor();
+ }
+ //	100ms‚¨‚«(‹tˆÊ‘Š)
+ if(timer_counter %2000 == 1000)
+ {
+	comm_tempsensor();
+ }
   if(servo_counter >1000)
   {
   	  servo_counter =0;
@@ -257,4 +269,5 @@ int get_distance()
 {
     return ussensor_value;
 }
+
 
