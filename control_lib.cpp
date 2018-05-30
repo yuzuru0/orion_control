@@ -14,10 +14,10 @@ int step_delay[2]={0x7FFF,0x7FFF};
 int step_dir[2] = {0,0};
 long step_position[2]={0,0};
 long step_position_ref[2] ={0,0};
-int servo_position_ref;
+int servo_position_ref=8;
 int servo_counter=0;
 
-#comment
+
 int state[2]={LOW,LOW};
 
 void update_servo_angle(int angle)
@@ -34,7 +34,7 @@ float update_step_position(int ch, float position, float speed)
 	pos_now = get_step_position(ch);
 	step_position_ref[ch-1] = position*ROTATEPULSE/3.14/2;
 	
-	if(step_position_ref[ch-1] <pos_now)
+	if(step_position_ref[ch-1] <pos_now*ROTATEPULSE/3.14/2)
 		update_step_speed(ch,-speed);
 
 	else
