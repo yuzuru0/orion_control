@@ -28,7 +28,9 @@ void update_servo_angle(int angle);
 
 int init_ussensor();
 int comm_ussensor();
+int comm_tempsensor();
 int get_distance();
+int get_temperature();
 
 static char send_data[4]={0x22,0x00,0x00,0x22};
 static char temp_data[4]={0x11,0x00,0x00,0x11};
