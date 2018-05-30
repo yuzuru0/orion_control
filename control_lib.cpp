@@ -14,13 +14,16 @@ int step_delay[2]={0x7FFF,0x7FFF};
 int step_dir[2] = {0,0};
 long step_position[2]={0,0};
 long step_position_ref[2] ={0,0};
-int servo_position_ref;
+int servo_position_ref=8;
 int servo_counter=0;
 
 int one_sec_counter=0;
 
 int ussensor_value=0;
 int ussensor_enable=0;
+
+int tempsensor_value=0;
+int tempsensor_enable=0;
  
 int state[2]={LOW,LOW};
 
@@ -38,7 +41,7 @@ float update_step_position(int ch, float position, float speed)
 	pos_now = get_step_position(ch);
 	step_position_ref[ch-1] = position*ROTATEPULSE/3.14/2;
 	
-	if(step_position_ref[ch-1] <pos_now)
+	if(step_position_ref[ch-1] <pos_now*ROTATEPULSE/3.14/2)
 		update_step_speed(ch,-speed);
 
 	else
@@ -265,9 +268,45 @@ int comm_ussensor()
 	return 0;
 }
 
+int comm_tempsensor()
+{
+  int read_data[255];
+  int temp;
+  int i;
+  int count_data=0;
+  
+  if(Serial.available())
+  {
+    while((temp = Serial.read()) != (int)-1)
+    {
+      read_data[count_data] = temp;
+      count_data++;
+    }
+
+    tempsensor_value = read_data[2] |((0x01&read_data[1])<<8);
+
+  }
+  else
+    tempsensor_value=-1;
+  
+  if(read_data[0] != 0x22)
+  	  tempsensor_value =-1;
+
+  for(i=0;i<4;i++)
+    Serial.write(temp_data[i]);
+
+	return 0;
+}
+
 int get_distance()
 {
     return ussensor_value;
+}
+
+
+int get_tempreture()
+{
+    return tempsensor_value;
 }
 
 
