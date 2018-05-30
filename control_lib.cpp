@@ -8,7 +8,7 @@ int stpPin1 = mePort[PORT_1].s2;
 int dirPin2 = mePort[PORT_2].s1;
 int stpPin2 = mePort[PORT_2].s2;
 
-int timer_counter;
+int timer_counter=0;
 int step_count[2];
 int step_delay[2]={0x7FFF,0x7FFF};
 int step_dir[2] = {0,0};
@@ -114,19 +114,20 @@ void drive_step_motor_s()
 //	100ms‚¨‚«
  if(timer_counter %  2000 ==0)
  {
- 	 comm_ussensor();
+ 	 if(ussensor_enable)
+ 		 comm_ussensor();
  }
  //	100ms‚¨‚«(‹tˆÊ‘Š)
  if(timer_counter %2000 == 1000)
  {
-	comm_tempsensor();
+ 	 if(tempsensor_enable)
+		comm_tempsensor();
  }
   if(servo_counter >1000)
   {
   	  servo_counter =0;
   	  digitalWrite(SERVO_PIN,1);
-  	  if(ussensor_enable)
-  	  	comm_ussensor();
+  	  
   }
   
   if(servo_counter ==servo_position_ref)
