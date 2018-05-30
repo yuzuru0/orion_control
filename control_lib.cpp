@@ -134,6 +134,7 @@ void drive_step_motor_s()
   	  digitalWrite(SERVO_PIN, 0);
 
   servo_counter++;
+  timer_counter++;
 
 
 	if(step_delay[0] != 0x7FFF)
@@ -161,7 +162,6 @@ void drive_step_motor_s()
 	  step_count[1]++;
 	}
   
-  timer_counter++;
 }
 
 
