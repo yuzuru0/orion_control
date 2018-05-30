@@ -244,3 +244,7 @@ int get_distance()
     return return_value;
 }
 
+void comm_ussensor()
+{
+	return;
+}

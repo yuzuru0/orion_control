@@ -29,6 +29,8 @@ void update_servo_angle(int angle);
 int init_ussensor();
 int get_distance();
 
+void comm_ussensor();
+
 static char send_data[4]={0x22,0x00,0x00,0x22};
 
 
