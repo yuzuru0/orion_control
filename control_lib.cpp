@@ -105,7 +105,7 @@ void update_step_speed(int ch,float speed)
 }
 
 // ステッピングモータ駆動関数(速度)
-void drive_step_motor_s()
+void drive_step_motor_s(void)
 {
 
 	//	サーボ周波数20Hzになるところで出力変更
@@ -152,7 +152,7 @@ void drive_step_motor_s()
 }
 
 // ステッピングモータ駆動関数(位置)
-void drive_step_motor_p()
+void drive_step_motor_p(void)
 {
 	
   //	サーボ周波数20Hzになるところで出力変更
@@ -217,7 +217,7 @@ void init_step_motor(int mode)
 }
 
 //超音波センサ初期化
-int init_ussensor()
+int init_ussensor(void)
 {
   int i;
    Serial.begin(9600);
@@ -227,7 +227,7 @@ int init_ussensor()
     Serial.write(send_data[i]);
 }
 
-int get_distance()
+int get_distance(void)
 {
   int read_data[255];
   int temp;
