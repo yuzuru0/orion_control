@@ -8,28 +8,30 @@ int stpPin1 = mePort[PORT_1].s2;
 int dirPin2 = mePort[PORT_2].s1;
 int stpPin2 = mePort[PORT_2].s2;
 
-int timer_counter;
+int timer_counter;		//計時用50μインクリ
 int step_count[2];
-int step_delay[2]={0x7FFF,0x7FFF};
-int step_dir[2] = {0,0};
-long step_position[2]={0,0};
-long step_position_ref[2] ={0,0};
-int servo_position_ref=8;
-int servo_counter=0;
+int step_delay[2]={0x7FFF,0x7FFF};	//ステッピングモータのパルス間隔
+int step_dir[2] = {0,0};			//回転方向 正回転1 逆回転-1
+long step_position[2]={0,0};		//現在位置(パルス)
+long step_position_ref[2] ={0,0};	//位置指令(パルス)
+int servo_position_ref=8;			//サーボ位置
+int servo_counter=0;				//サーボ制御用カウンタ
 
-int state[2]={LOW,LOW};
+int state[2]={LOW,LOW};				//ステッピングモータ制御ピン
 
 void update_servo_angle(int angle)
 {
 	servo_position_ref = angle *28 /180 +8;
 }
 
+//	speedの速度でpositionまでchのステッピングモータを位置指令値セット
 float update_step_position(int ch, float position, float speed)
 {
 	float pos_now;
 
 	if(speed<0)
 		speed = -speed;
+
 	pos_now = get_step_position(ch);
 	step_position_ref[ch-1] = position*ROTATEPULSE/3.14/2;
 	
@@ -39,6 +41,7 @@ float update_step_position(int ch, float position, float speed)
 	else
 		update_step_speed(ch,speed);
 	
+	//	戻り値は目標値までの誤差
 	return step_position_ref[ch-1] -pos_now;
 
 }
@@ -48,19 +51,20 @@ float get_step_position(int ch)
 	return (step_position[ch-1]*2*3.14/ROTATEPULSE);
 }
 
+//	chのステッピングモータの速度指令値をspeedにセット
 void update_step_speed(int ch,float speed)
 {
   if(ch ==1)
   {
   	  if(speed<0)
   	  {
-  	  	  digitalWrite(dirPin1,1);
+  	  	  digitalWrite(dirPin1,1);	// 1の時負回転
   	  	  step_dir[0] =-1;
   	  	  speed= -speed;
   	  }
   	  else
   	  {
-  	  	  digitalWrite(dirPin1,0);
+  	  	  digitalWrite(dirPin1,0);	// 0の時正回転
   	  	  step_dir[0] =1;
   	  }
   	  
@@ -78,13 +82,13 @@ void update_step_speed(int ch,float speed)
   {
   	  if(speed<0)
   	  {
-  	  	  digitalWrite(dirPin2,1);
+  	  	  digitalWrite(dirPin2,1);	// 1の時負回転
   	  	  step_dir[1] = -1;
   	  	  speed= -speed;
   	  }
   	  else
   	  {
-  	  	  digitalWrite(dirPin2,0);
+  	  	  digitalWrite(dirPin2,0);	// 0の時正回転
   	  	  step_dir[1] =1;
   	  }
   	  
@@ -100,41 +104,45 @@ void update_step_speed(int ch,float speed)
 
 }
 
+// ステッピングモータ駆動関数(速度)
 void drive_step_motor_s()
 {
 
-  if(servo_counter >1000)
+	//	サーボ周波数20Hzになるところで出力変更
+  if(servo_counter >1000)	
   {
   	  servo_counter =0;
   	  digitalWrite(SERVO_PIN,1);
   }
   
-  if(servo_counter ==servo_position_ref)
+  //サーボ所定のデューティ作成
+  if(servo_counter ==servo_position_ref)	
   	  digitalWrite(SERVO_PIN, 0);
 
   servo_counter++;
 
-
+	// 停止状態ステータスで無ければステッピングモータドライブ
 	if(step_delay[0] != 0x7FFF)
 	{
-	  if(step_count[0] >= step_delay[0])
+	  if(step_count[0] >= step_delay[0])	//所定の速度が出るタイミングで
 	  {
-	    state[0] = !state[0];
+	    state[0] = !state[0];				//出力パルス反転
 	    digitalWrite(stpPin1, state[0]);
 	    step_count[0] = 0;
-	    step_position[0] += step_dir[0] * state[0];
+	    step_position[0] += step_dir[0] * state[0]; //内部位置情報アップデート
 	  }
 	  step_count[0]++;
 	}
 
+	// 停止状態ステータスで無ければステッピングモータドライブ
 	if(step_delay[1] != 0x7FFF)
 	{
-	  if(step_count[1] >= step_delay[1])
+	  if(step_count[1] >= step_delay[1])	//所定の速度が出るタイミングで
 	  {
-	    state[1] = !state[1];
+	    state[1] = !state[1];				//出力パルス反転
 	    digitalWrite(stpPin2, state[1]);
 	    step_count[1] = 0;
-	    step_position[1] += step_dir[1] * state[1];
+	    step_position[1] += step_dir[1] * state[1];	//内部位置情報アップデート
 	  }
 
 	  step_count[1]++;
@@ -143,40 +151,45 @@ void drive_step_motor_s()
   timer_counter++;
 }
 
-
+// ステッピングモータ駆動関数(位置)
 void drive_step_motor_p()
 {
+	
+  //	サーボ周波数20Hzになるところで出力変更
   if(servo_counter >1000)
   {
   	  servo_counter =0;
   	  digitalWrite(SERVO_PIN,1);
   }
   
+  //サーボ所定のデューティ作成
   if(servo_counter ==servo_position_ref)
   	  digitalWrite(SERVO_PIN, 0);
 
   servo_counter++;
 
+	// 停止状態ステータスでなく、かつ指令位置にいなければステッピングモータドライブ
 	if(step_delay[0] != 0x7FFF && step_position[0] != step_position_ref[0])
 	{
-	  if(step_count[0] >= step_delay[0])
+	  if(step_count[0] >= step_delay[0])	//所定の速度が出るタイミングで
 	  {
-	    state[0] = !state[0];
+	    state[0] = !state[0];				//出力パルス反転
 	    digitalWrite(stpPin1, state[0]);
 	    step_count[0] = 0;
-	    step_position[0] += step_dir[0] * state[0];
+	    step_position[0] += step_dir[0] * state[0];	//内部位置情報アップデート
 	  }
 	  step_count[0]++;
 	}
 
+	// 停止状態ステータスでなく、かつ指令位置にいなければステッピングモータドライブ
 	if(step_delay[1] != 0x7FFF && step_position[1] != step_position_ref[1])
 	{
-	  if(step_count[1] >= step_delay[1])
+	  if(step_count[1] >= step_delay[1])	//所定の速度が出るタイミングで
 	  {
-	    state[1] = !state[1];
+	    state[1] = !state[1];				//出力パルス反転
 	    digitalWrite(stpPin2, state[1]);
 	    step_count[1] = 0;
-	    step_position[1] += step_dir[1] * state[1];
+	    step_position[1] += step_dir[1] * state[1];	//内部位置情報アップデート
 	  }
 
 	  step_count[1]++;
@@ -184,6 +197,7 @@ void drive_step_motor_p()
 
 }
 
+//モータドライブ初期化
 void init_step_motor(int mode)
 {
   //  setting for stepping motor
@@ -202,7 +216,7 @@ void init_step_motor(int mode)
 
 }
 
-
+//超音波センサ初期化
 int init_ussensor()
 {
   int i;
@@ -221,6 +235,7 @@ int get_distance()
   int count_data=0;
   int return_value=0;
   
+  // 前回のデータが届いていれば
   if(Serial.available())
   {
     while((temp = Serial.read()) != (int)-1)
@@ -229,6 +244,7 @@ int get_distance()
       count_data++;
     }
 
+	// シリアルデータ2バイトを結合(上位は1bit以外切り捨て)
     return_value = read_data[2] |((0x01&read_data[1])<<8);
 
   }
@@ -238,13 +254,10 @@ int get_distance()
   if(read_data[0] != 0x22)
   	  return_value =-1;
 
+// 次回用のセンサパルス送信
   for(i=0;i<4;i++)
     Serial.write(send_data[i]);
 
     return return_value;
 }
 
-void comm_ussensor()
-{
-	return;
-}
