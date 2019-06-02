@@ -304,14 +304,7 @@ int get_distance_s(void)
     softuart.write(send_data[i]);
   }
 
-	//データがそろうまで待機
-	count_data=0;
-    while(!softuart.available() && count_data <1000)
-    {
-      count_data++;
-    }
-        Serial.print("wait\t");
-        Serial.println(count_data,DEC);
+    delay(5);
 
 	count_data=0;
 
@@ -321,8 +314,6 @@ int get_distance_s(void)
     while((temp = softuart.read()) != (int)-1)
     {
       read_data[count_data] = temp;
-      Serial.print(" 0x");
-      Serial.print( read_data[count_data],HEX);
 
       count_data++;
       delay(1);
@@ -330,8 +321,6 @@ int get_distance_s(void)
 
 	// シリアルデータ2バイトを結合(上位は1bit以外切り捨て)
     return_value = read_data[2] |((0x01&read_data[1])<<8);
-        Serial.print("\t");
-        Serial.println(return_value,DEC);
   }
   else
     return_value=-1;
@@ -350,6 +339,7 @@ int get_temperature_s(void)
   int temp;
   int i;
   int count_data=0;
+  int wait_count=0;
   int return_value=0;
   extern SoftwareSerial softuart;
 
@@ -359,11 +349,8 @@ int get_temperature_s(void)
     while((temp = softuart.read()) != (int)-1)
     {
       read_data[count_data] = temp;
-      Serial.print(" 0x");
-      Serial.print( read_data[count_data],HEX);
 
       count_data++;
-//      delay(1);
     }
   }
 
@@ -371,15 +358,11 @@ int get_temperature_s(void)
   for(i=0;i<4;i++)
   {
     softuart.write(temp_send_data[i]);
-//     delay(5);
+    delay(1);
   }
 
+    delay(5);
 
-	count_data=0;
-    while(!softuart.available() && count_data <10000)
-      count_data++;
-        Serial.print("ab\t");
-        Serial.print(count_data,DEC);
 
 	count_data=0;
   // データが届いていれば読む
@@ -388,8 +371,6 @@ int get_temperature_s(void)
     while((temp = softuart.read()) != (int)-1)
     {
       read_data[count_data] = temp;
-      Serial.print(" 0x");
-      Serial.print( read_data[count_data],HEX);
 
       count_data++;
 //      delay(1);
@@ -398,9 +379,6 @@ int get_temperature_s(void)
 
 	// シリアルデータ2バイトを結合(上位は1bit以外切り捨て)
     return_value = read_data[2] |(read_data[1]<<8);
-        Serial.print("\t");
-        Serial.print("aa");
-        Serial.println(return_value,DEC);
   }
   else
     return_value=-1;
