@@ -57,7 +57,8 @@ void update_servo_angle(int angle);
 
 int init_ussensor();
 int get_distance();
-
+int get_temperature(void);
+	
 int init_ussensor_s();
 int get_distance_s();
 int get_temperature_s(void);

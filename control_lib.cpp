@@ -263,6 +263,62 @@ int get_distance(void)
 }
 
 
+int get_temperature(void)
+{
+  int read_data[255];
+  int temp;
+  int i;
+  int count_data=0;
+  int wait_count=0;
+  int return_value=0;
+
+  // 前回のデータが届いていれば読み捨てる
+  if(Serial.available())
+  {
+    while((temp = Serial.read()) != (int)-1)
+    {
+      read_data[count_data] = temp;
+
+      count_data++;
+    }
+  }
+
+// 温度センサパルス送信
+  for(i=0;i<4;i++)
+  {
+    Serial.write(temp_send_data[i]);
+    delay(1);
+  }
+
+    delay(5);
+
+
+	count_data=0;
+  // データが届いていれば読む
+  if(Serial.available())
+  {
+    while((temp = Serial.read()) != (int)-1)
+    {
+      read_data[count_data] = temp;
+
+      count_data++;
+//      delay(1);
+    }
+
+
+	// シリアルデータ2バイトを結合(上位は1bit以外切り捨て)
+    return_value = read_data[2] |(read_data[1]<<8);
+  }
+  else
+    return_value=-999;
+  
+  if(read_data[0] != 0x11)
+  	  return_value =-999;
+
+
+    return return_value;
+}
+
 
 
 //ソフトウェアシリアル版
@@ -381,10 +437,10 @@ int get_temperature_s(void)
     return_value = read_data[2] |(read_data[1]<<8);
   }
   else
-    return_value=-1;
+    return_value=-999;
   
   if(read_data[0] != 0x11)
-  	  return_value =-1;
+  	  return_value =-999;
 
 
     return return_value;
