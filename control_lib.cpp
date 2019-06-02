@@ -216,6 +216,7 @@ void init_step_motor(int mode)
 
 }
 
+//ハードウェア版
 //超音波センサ初期化
 int init_ussensor(void)
 {
@@ -261,3 +262,130 @@ int get_distance(void)
     return return_value;
 }
 
+
+
+
+//ソフトウェアシリアル版
+//超音波センサ初期化
+int init_ussensor_s(void)
+{
+  int i;
+  extern SoftwareSerial softuart;
+   softuart.begin( 9600UL  );
+   delay(10);
+
+  for(i=0;i<4;i++)
+    softuart.write(send_data[i]);
+}
+
+int get_distance_s(void)
+{
+  int read_data[255];
+  int temp;
+  int i;
+  int count_data=0;
+  int return_value=0;
+    extern SoftwareSerial softuart;
+
+  // 前回のデータが届いていれば
+  if(softuart.available())
+  {
+    while((temp = softuart.read()) != (int)-1)
+    {
+      read_data[count_data] = temp;
+      Serial.print(" 0x");
+      Serial.print( read_data[count_data],HEX);
+
+      count_data++;
+      delay(1);
+    }
+
+	// シリアルデータ2バイトを結合(上位は1bit以外切り捨て)
+    return_value = read_data[2] |((0x01&read_data[1])<<8);
+        Serial.print("\t");
+        Serial.println(return_value,DEC);
+  }
+  else
+    return_value=-1;
+  
+  if(read_data[0] != 0x22)
+  	  return_value =-1;
+
+// 次回用のセンサパルス送信
+  for(i=0;i<4;i++)
+  {
+    softuart.write(send_data[i]);
+     delay(5);
+  }
+
+    return return_value;
+}
+
+
+int get_temperature_s(void)
+{
+  int read_data[255];
+  int temp;
+  int i;
+  int count_data=0;
+  int return_value=0;
+  extern SoftwareSerial softuart;
+
+  // 前回のデータが届いていれば読み捨てる
+  if(softuart.available())
+  {
+    while((temp = softuart.read()) != (int)-1)
+    {
+      read_data[count_data] = temp;
+      Serial.print(" 0x");
+      Serial.print( read_data[count_data],HEX);
+
+      count_data++;
+//      delay(1);
+    }
+  }
+
+// 温度センサパルス送信
+  for(i=0;i<4;i++)
+  {
+    softuart.write(temp_send_data[i]);
+//     delay(5);
+  }
+
+
+	count_data=0;
+    while(!softuart.available() && count_data <10000)
+      count_data++;
+        Serial.print("ab\t");
+        Serial.print(count_data,DEC);
+
+	count_data=0;
+  // データが届いていれば読む
+  if(softuart.available())
+  {
+    while((temp = softuart.read()) != (int)-1)
+    {
+      read_data[count_data] = temp;
+      Serial.print(" 0x");
+      Serial.print( read_data[count_data],HEX);
+
+      count_data++;
+//      delay(1);
+    }
+
+
+	// シリアルデータ2バイトを結合(上位は1bit以外切り捨て)
+    return_value = read_data[2] |(read_data[1]<<8);
+        Serial.print("\t");
+        Serial.print("aa");
+        Serial.println(return_value,DEC);
+  }
+  else
+    return_value=-1;
+  
+  if(read_data[0] != 0x11)
+  	  return_value =-1;
+
+
+    return return_value;
+}
