@@ -44,7 +44,7 @@ SoftwareSerial softuart(A1,A6);
 SoftwareSerial softuart(A0,A7);
 #endif
 
-
+void (*call_control_process)(void);
 
 
 void init_step_motor(int mode);
@@ -54,7 +54,9 @@ void update_step_speed(int ch,float speed);
 float get_step_position(int ch);
 float update_step_position(int ch, float position, float speed);
 void update_servo_angle(int angle);
-
+void nop_process(void);
+int set_interrupt_function(void (*function)(void));
+	
 int init_ussensor();
 int get_distance();
 int get_temperature(void);

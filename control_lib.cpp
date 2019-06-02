@@ -149,6 +149,9 @@ void drive_step_motor_s(void)
 	}
   
   timer_counter++;
+  
+  (*call_control_process)();
+  
 }
 
 // ステッピングモータ駆動関数(位置)
@@ -194,6 +197,7 @@ void drive_step_motor_p(void)
 
 	  step_count[1]++;
 	}
+  (*call_control_process)();
 
 }
 
@@ -207,6 +211,8 @@ void init_step_motor(int mode)
   pinMode(stpPin2, OUTPUT);
   
   pinMode(SERVO_PIN,OUTPUT);
+  
+  call_control_process = nop_process;
 
   Timer1.initialize(50);
   if(mode ==SPEED)
@@ -214,6 +220,16 @@ void init_step_motor(int mode)
   if(mode ==POSITION)
   	Timer1.attachInterrupt(drive_step_motor_p);
 
+}
+
+void nop_process(void)
+{
+  	
+}
+
+int set_interrupt_function(void (*function)(void))
+{
+	call_control_process = function;
 }
 
 //ハードウェア版
