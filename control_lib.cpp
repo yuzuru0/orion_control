@@ -274,8 +274,6 @@ int init_ussensor_s(void)
    softuart.begin( 9600UL  );
    delay(10);
 
-  for(i=0;i<4;i++)
-    softuart.write(send_data[i]);
 }
 
 int get_distance_s(void)
@@ -287,7 +285,37 @@ int get_distance_s(void)
   int return_value=0;
     extern SoftwareSerial softuart;
 
-  // 前回のデータが届いていれば
+  // 前回のデータが届いていれば読み捨てる
+  if(softuart.available())
+  {
+    while((temp = softuart.read()) != (int)-1)
+    {
+      read_data[count_data] = temp;
+      Serial.print(" 0x");
+      Serial.print( read_data[count_data],HEX);
+
+      count_data++;
+    }
+  }
+
+// センサパルス送信
+  for(i=0;i<4;i++)
+  {
+    softuart.write(send_data[i]);
+  }
+
+	//データがそろうまで待機
+	count_data=0;
+    while(!softuart.available() && count_data <1000)
+    {
+      count_data++;
+    }
+        Serial.print("wait\t");
+        Serial.println(count_data,DEC);
+
+	count_data=0;
+
+  // データが届いていれば
   if(softuart.available())
   {
     while((temp = softuart.read()) != (int)-1)
@@ -311,12 +339,6 @@ int get_distance_s(void)
   if(read_data[0] != 0x22)
   	  return_value =-1;
 
-// 次回用のセンサパルス送信
-  for(i=0;i<4;i++)
-  {
-    softuart.write(send_data[i]);
-     delay(5);
-  }
 
     return return_value;
 }
