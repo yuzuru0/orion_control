@@ -34,16 +34,6 @@ SoftwareSerial softuart(2,8);
 SoftwareSerial softuart(A3,A2);
 #endif
 
-#ifdef	SOFT_US_SENSOR7
-#include <SoftwareSerial.h>
-SoftwareSerial softuart(A1,A6);
-#endif
-
-#ifdef	SOFT_US_SENSOR8
-#include <SoftwareSerial.h>
-SoftwareSerial softuart(A0,A7);
-#endif
-
 void (*call_control_process)(void);
 
 
