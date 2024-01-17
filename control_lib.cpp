@@ -19,7 +19,7 @@ int servo_counter=0;				//サーボ制御用カウンタ
 
 int state[2]={LOW,LOW};				//ステッピングモータ制御ピン
 
-int servo_ch[8][2][2] = {
+int servo_ch[MAX_SERVO_CON][MAX_SERVO_SLOT][2] = {
                          {{0,10},{0,11}},
                          {{0,9},{0,3}},
                          {{0,13},{0,12}},
