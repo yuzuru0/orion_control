@@ -168,18 +168,27 @@ void drive_step_motor_s(void)
 // ステッピングモータ駆動関数(位置)
 void drive_step_motor_p(void)
 {
-	
-  //	サーボ周波数20Hzになるところで出力変更
-  if(servo_counter >1000)
-  {
-  	  servo_counter =0;
-  	  digitalWrite(SERVO_PIN,1);
-  }
-  
-  //サーボ所定のデューティ作成
-  if(servo_counter ==servo_position_ref)
-  	  digitalWrite(SERVO_PIN, 0);
+	int i,j;
 
+	for(i=0;i<MAX_SERVO_CON;i++)
+	{
+		for(j=0;j<MAX_SERVO_SLOT;j++)
+		{
+			if(servo_ch[i][j][SERVO_EN] ==1)
+			{
+				//	サーボ周波数20Hzになるところで出力変更
+  				if(servo_counter >1000)	
+  				{
+					servo_counter =0;
+					digitalWrite(servo_ch[i][j][SERVO_PORT],1);
+				}
+				
+				//サーボ所定のデューティ作成
+				if(servo_counter ==servo_position_ref)	
+					digitalWrite(servo_ch[i][j][SERVO_PORT], 0);
+			}
+		}
+	}
   servo_counter++;
 
 	// 停止状態ステータスでなく、かつ指令位置にいなければステッピングモータドライブ
