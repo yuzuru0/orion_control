@@ -20,6 +20,9 @@
 #define SERVO_EN 0
 #define SERVO_PORT 1
 
+#define MAX_SERVO_CON	8	//マイコンボードの最大コネクタ数
+#define	MAX_SERVO_SLOT	2	//各ポートごとのサーボスロット数
+
 #ifdef	SOFT_US_SENSOR3
 #include <SoftwareSerial.h>
 SoftwareSerial softuart(13,12);
