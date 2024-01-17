@@ -23,16 +23,16 @@ int state[2]={LOW,LOW};				//ステッピングモータ制御ピン
 int servo_ch[MAX_SERVO_CON][MAX_SERVO_SLOT][2] = {
                          {{0,10},{0,11}},
                          {{0,9},{0,3}},
-                         {{0,13},{0,12}},
+                         {{1,13},{0,12}},
                          {{0,2},{0,8}},
                          {{0,17},{0,16}},
                          {{0,15},{0,20}},
                          {{0,14},{0,21}}};
 
 
-void update_servo_angle(int angle)
+void update_servo_angle(int connector, int slot, int angle)
 {
-	servo_position_ref = angle *32 /180 +10;
+	servo_position_ref[connector-1][slot-1] = angle *32 /180 +10;
 	Serial.print("");		// 空シリアルを入れないとなぜか動かないのを修正(謎)
 }
 
@@ -128,7 +128,7 @@ void drive_step_motor_s(void)
   }
   
   //サーボ所定のデューティ作成
-  if(servo_counter ==servo_position_ref)	
+//  if(servo_counter ==servo_position_ref)	
   	  digitalWrite(SERVO_PIN, 0);
 
   servo_counter++;

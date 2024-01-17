@@ -16,7 +16,7 @@
 #define SPEED 0
 #define POSITION 1
 
-#define SERVO_PIN 12
+#define SERVO_PIN 13
 #define SERVO_EN 0
 #define SERVO_PORT 1
 
@@ -47,7 +47,7 @@ void drive_step_motor_p();
 void update_step_speed(int ch,float speed);
 float get_step_position(int ch);
 float update_step_position(int ch, float position, float speed);
-void update_servo_angle(int angle);
+void update_servo_angle(int connector, int slot, int angle);
 void nop_process(void);
 int set_interrupt_function(void (*function)(void));
 	
