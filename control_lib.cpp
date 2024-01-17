@@ -14,7 +14,8 @@ int step_delay[2]={0x7FFF,0x7FFF};	//ステッピングモータのパルス間隔
 int step_dir[2] = {0,0};			//回転方向 正回転1 逆回転-1
 long step_position[2]={0,0};		//現在位置(パルス)
 long step_position_ref[2] ={0,0};	//位置指令(パルス)
-int servo_position_ref=8;			//サーボ位置
+int servo_position_ref[MAX_SERVO_CON][MAX_SERVO_SLOT]
+	={{8,8},{8,8},{8,8},{8,8},{8,8},{8,8},{8,8},{8,8}};			//サーボ位置
 int servo_counter=0;				//サーボ制御用カウンタ
 
 int state[2]={LOW,LOW};				//ステッピングモータ制御ピン
@@ -184,7 +185,7 @@ void drive_step_motor_p(void)
 				}
 				
 				//サーボ所定のデューティ作成
-				if(servo_counter ==servo_position_ref)	
+				if(servo_counter ==servo_position_ref[i][j])	
 					digitalWrite(servo_ch[i][j][SERVO_PORT], 0);
 			}
 		}
