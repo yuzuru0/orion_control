@@ -30,6 +30,18 @@ int servo_ch[MAX_SERVO_CON][MAX_SERVO_SLOT][2] = {
                          {{0,14},{0,21}}};
 
 
+int init_servo_motor(int connector, int slot)
+{
+	if(connector >MAX_SERVO_CON || connector <0)
+		return -1;
+	if(slot > MAX_SERVO_SLOT || slot <0)
+		return -1;
+	
+	servo_ch[connector -1][slot -1][SERVO_EN] =0;
+	pinMode(servo_ch[connector -1][slot -1][SERVO_PORT],OUTPUT);
+	return 0;
+}
+
 void update_servo_angle(int connector, int slot, int angle)
 {
 	servo_position_ref[connector-1][slot-1] = angle *32 /180 +10;
