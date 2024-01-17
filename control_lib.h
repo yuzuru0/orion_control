@@ -17,7 +17,8 @@
 #define POSITION 1
 
 #define SERVO_PIN 12
-
+#define SERVO_EN 0
+#define SERVO_PORT 1
 
 #ifdef	SOFT_US_SENSOR3
 #include <SoftwareSerial.h>
