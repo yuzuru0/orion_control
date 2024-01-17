@@ -21,7 +21,7 @@ int state[2]={LOW,LOW};				//ステッピングモータ制御ピン
 
 void update_servo_angle(int angle)
 {
-	servo_position_ref = angle *28 /180 +8;
+	servo_position_ref = angle *32 /180 +10;
 	Serial.print("");		// 空シリアルを入れないとなぜか動かないのを修正(謎)
 }
 
