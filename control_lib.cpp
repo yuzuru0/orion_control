@@ -19,6 +19,16 @@ int servo_counter=0;				//サーボ制御用カウンタ
 
 int state[2]={LOW,LOW};				//ステッピングモータ制御ピン
 
+int servo_ch[8][2][2] = {
+                         {{0,10},{0,11}},
+                         {{0,9},{0,3}},
+                         {{0,13},{0,12}},
+                         {{0,2},{0,8}},
+                         {{0,17},{0,16}},
+                         {{0,15},{0,20}},
+                         {{0,14},{0,21}}};
+
+
 void update_servo_angle(int angle)
 {
 	servo_position_ref = angle *32 /180 +10;
