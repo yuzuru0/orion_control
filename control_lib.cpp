@@ -38,6 +38,9 @@ int init_servo_motor(int connector, int slot)
 	if(slot > MAX_SERVO_SLOT || slot <0)
 		return -1;
 	
+	if( slot == 2 && (connector == 7 || connector == 8))	// IOo—Í‚ªŽg‚¦‚È‚¢ƒsƒ“
+		return -2;
+	
 	servo_ch[connector -1][slot -1][SERVO_EN] =1;
 	pinMode(servo_ch[connector -1][slot -1][SERVO_PORT],OUTPUT);
 	return 0;
