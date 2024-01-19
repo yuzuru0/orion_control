@@ -144,18 +144,32 @@ void update_step_speed(int ch,float speed)
 void drive_step_motor_s(void)
 {
 
-	//	サーボ周波数20Hzになるところで出力変更
-  if(servo_counter[0][0] >1000)	
-  {
-  	  servo_counter[0][0] =0;
-  	  digitalWrite(SERVO_PIN,1);
-  }
-  
-  //サーボ所定のデューティ作成
-//  if(servo_counter ==servo_position_ref)	
-  	  digitalWrite(SERVO_PIN, 0);
+	int i,j;
 
-  servo_counter[0][0]++;
+	for(i=0;i<MAX_SERVO_CON;i++)
+	{
+		for(j=0;j<MAX_SERVO_SLOT;j++)
+		{
+			if(servo_ch[i][j][SERVO_EN] ==1)
+			{
+
+				//	サーボ周波数20Hzになるところで出力変更
+  				if(servo_counter[i][j] >1000)	
+  				{
+					servo_counter[i][j] =0;
+					digitalWrite(servo_ch[i][j][SERVO_PORT],1);
+				}
+				
+				//サーボ所定のデューティ作成
+				if(servo_counter[i][j] ==servo_position_ref[i][j])	
+					digitalWrite(servo_ch[i][j][SERVO_PORT], 0);
+				
+				servo_counter[i][j]++;
+			}
+		
+		}
+	}
+  
 
 	// 停止状態ステータスで無ければステッピングモータドライブ
 	if(step_delay[0] != 0x7FFF)
