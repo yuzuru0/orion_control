@@ -21,13 +21,13 @@ int servo_counter=0;				//サーボ制御用カウンタ
 int state[2]={LOW,LOW};				//ステッピングモータ制御ピン
 
 int servo_ch[MAX_SERVO_CON][MAX_SERVO_SLOT][2] = {
-                         {{0,10},{0,11}},
-                         {{0,9},{0,3}},
-                         {{1,13},{0,12}},
-                         {{0,2},{0,8}},
-                         {{0,17},{0,16}},
-                         {{0,15},{0,20}},
-                         {{0,14},{0,21}}};
+                         {{0,11},{0,10}},
+                         {{0,3},{0,9}},
+                         {{0,12},{0,13}},
+                         {{0,8},{0,2}},
+                         {{0,16},{0,17}},
+                         {{0,20},{0,15}},
+                         {{0,21},{0,14}}};
 
 
 int init_servo_motor(int connector, int slot)
@@ -37,7 +37,7 @@ int init_servo_motor(int connector, int slot)
 	if(slot > MAX_SERVO_SLOT || slot <0)
 		return -1;
 	
-	servo_ch[connector -1][slot -1][SERVO_EN] =0;
+	servo_ch[connector -1][slot -1][SERVO_EN] =1;
 	pinMode(servo_ch[connector -1][slot -1][SERVO_PORT],OUTPUT);
 	return 0;
 }
