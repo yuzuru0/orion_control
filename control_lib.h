@@ -48,7 +48,7 @@ void update_step_speed(int ch,float speed);
 float get_step_position(int ch);
 float update_step_position(int ch, float position, float speed);
 int init_servo_motor(int connector, int slot);
-void update_servo_angle(int connector, int slot, int angle);
+int update_servo_angle(int connector, int slot, int angle);
 void nop_process(void);
 int set_interrupt_function(void (*function)(void));
 	
