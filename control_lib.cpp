@@ -53,6 +53,9 @@ int update_servo_angle(int connector, int slot, int angle)
 	if(slot > MAX_SERVO_SLOT || slot <0)
 		return -1;
 	
+	if( slot == 2 && (connector == 7 || connector == 8))	// IO出力が使えないピン
+	return -2;
+	
 	servo_position_ref[connector-1][slot-1] = angle *32 /180 +10;
 	Serial.print("");		// 空シリアルを入れないとなぜか動かないのを修正(謎)
 }
