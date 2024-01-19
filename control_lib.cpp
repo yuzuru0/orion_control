@@ -16,7 +16,7 @@ long step_position[2]={0,0};		//現在位置(パルス)
 long step_position_ref[2] ={0,0};	//位置指令(パルス)
 int servo_position_ref[MAX_SERVO_CON][MAX_SERVO_SLOT]
 	={{8,8},{8,8},{8,8},{8,8},{8,8},{8,8},{8,8},{8,8}};			//サーボ位置
-int servo_counter=0;				//サーボ制御用カウンタ
+int servo_counter[MAX_SERVO_CON][MAX_SERVO_SLOT];				//サーボ制御用カウンタ
 
 int state[2]={LOW,LOW};				//ステッピングモータ制御ピン
 
@@ -54,7 +54,7 @@ int update_servo_angle(int connector, int slot, int angle)
 		return -1;
 	
 	if( slot == 2 && (connector == 7 || connector == 8))	// IO出力が使えないピン
-	return -2;
+		return -2;
 	
 	servo_position_ref[connector-1][slot-1] = angle *32 /180 +10;
 	Serial.print("");		// 空シリアルを入れないとなぜか動かないのを修正(謎)
@@ -145,9 +145,9 @@ void drive_step_motor_s(void)
 {
 
 	//	サーボ周波数20Hzになるところで出力変更
-  if(servo_counter >1000)	
+  if(servo_counter[0][0] >1000)	
   {
-  	  servo_counter =0;
+  	  servo_counter[0][0] =0;
   	  digitalWrite(SERVO_PIN,1);
   }
   
@@ -155,7 +155,7 @@ void drive_step_motor_s(void)
 //  if(servo_counter ==servo_position_ref)	
   	  digitalWrite(SERVO_PIN, 0);
 
-  servo_counter++;
+  servo_counter[0][0]++;
 
 	// 停止状態ステータスで無ければステッピングモータドライブ
 	if(step_delay[0] != 0x7FFF)
@@ -201,20 +201,24 @@ void drive_step_motor_p(void)
 		{
 			if(servo_ch[i][j][SERVO_EN] ==1)
 			{
+
 				//	サーボ周波数20Hzになるところで出力変更
-  				if(servo_counter >1000)	
+  				if(servo_counter[i][j] >1000)	
   				{
-					servo_counter =0;
+					servo_counter[i][j] =0;
 					digitalWrite(servo_ch[i][j][SERVO_PORT],1);
 				}
 				
 				//サーボ所定のデューティ作成
-				if(servo_counter ==servo_position_ref[i][j])	
+				if(servo_counter[i][j] ==servo_position_ref[i][j])	
 					digitalWrite(servo_ch[i][j][SERVO_PORT], 0);
+				
+				servo_counter[i][j]++;
 			}
+		
 		}
 	}
-  servo_counter++;
+  
 
 	// 停止状態ステータスでなく、かつ指令位置にいなければステッピングモータドライブ
 	if(step_delay[0] != 0x7FFF && step_position[0] != step_position_ref[0])
@@ -254,8 +258,6 @@ void init_step_motor(int mode)
   pinMode(stpPin1, OUTPUT);
   pinMode(dirPin2, OUTPUT);
   pinMode(stpPin2, OUTPUT);
-  
-  pinMode(SERVO_PIN,OUTPUT);
   
   call_control_process = nop_process;
 
