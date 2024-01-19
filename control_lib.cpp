@@ -27,8 +27,8 @@ int servo_ch[MAX_SERVO_CON][MAX_SERVO_SLOT][2] = {
                          {{0,8},{0,2}},
                          {{0,0},{0,0}},
                          {{0,16},{0,17}},
-                         {{0,20},{0,15}},
-                         {{0,21},{0,14}}};
+                         {{0,0},{0,15}},
+                         {{0,0},{0,14}}};
 
 
 int init_servo_motor(int connector, int slot)
